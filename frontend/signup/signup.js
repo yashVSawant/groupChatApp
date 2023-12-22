@@ -1,10 +1,17 @@
 const signup = document.getElementById('signup');
 
-signup.addEventListener('click',(e)=>{
+signup.addEventListener('click',async(e)=>{
     e.preventDefault();
-        const name = document.getElementById('name');
-        const email = document.getElementById('email');
-        const phone = document.getElementById('phone');
-        const password = document.getElementById('password');
-        console.log(name.value , email.value , phone.value , password.value)
+        try{
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            console.log(name ,email, phone, password)
+            const postUserInfo = await axios.post('http://localhost:3000/user/signup',{name ,email, phone, password});
+            alert(postUserInfo.data.message);
+            
+        }catch(err){
+            alert(err.response.data.message);
+        }
 })
