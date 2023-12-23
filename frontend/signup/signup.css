@@ -5,8 +5,24 @@ form{
     margin: 40px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    /* align-items: center; */
 }
 input{
     margin-bottom: 20px;
+}
+button{
+    padding: 5%;
+    border-radius: 9px;
+    border: 3px solid rgb(112, 161, 144);
+    background-color: aquamarine;
+}
+#container{
+    background-color: rgb(236, 192, 139);
+    border-radius: 20px;
+    margin-left: 20%;
+    margin-right: 20%;
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }

@@ -20,7 +20,3 @@ exports.getUsers = async(req,res,next)=>{
             }
         })
 }
-
-function encryptPassword (password){
-
-}

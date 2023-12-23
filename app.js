@@ -8,7 +8,10 @@ const sequelize = require('./util/database');
 const userRoute = require('./routes/user');
 
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+    origin:'*',
+    methods:['GET','POST','DELETE','PUT']
+}));
 
 app.use('/user',userRoute);
 
