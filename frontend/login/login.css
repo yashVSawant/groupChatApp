@@ -1,0 +1,28 @@
+body{
+    background-color: rgb(195, 228, 163);
+}
+form{
+    margin: 40px;
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+}
+input{
+    margin-bottom: 20px;
+}
+button{
+    padding: 5%;
+    border-radius: 9px;
+    border: 3px solid rgb(112, 161, 144);
+    background-color: rgb(240, 220, 134);
+}
+#container{
+    background-color: rgb(60, 220, 241);
+    border-radius: 20px;
+    margin-left: 20%;
+    margin-right: 20%;
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
