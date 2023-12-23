@@ -9,7 +9,7 @@ login.addEventListener('click',async(e)=>{
             const postUserInfo = await axios.post('http://localhost:3000/user/login',{email, password});
             alert(postUserInfo.data.message);
             localStorage.setItem('grpChatappToken',postUserInfo.data.token);
-            location.href='../signup/signup.html';
+            location.href='../chatHomePage/chatHomePage.html';
         }catch(err){
             console.log(err);
         }
