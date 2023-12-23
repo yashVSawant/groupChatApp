@@ -1,5 +1,8 @@
 const user = require('../models/user');
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
+
 
 exports.signupUser = async(req,res,next)=>{
         const {email,name,phoneNo,password} = req.body;
@@ -7,14 +10,18 @@ exports.signupUser = async(req,res,next)=>{
         const saltRound = 10;
         bcrypt.hash(password,saltRound,async(err,hash)=>{
             try{
-            console.log('error from user.controller>>>',err);
-            await user.create({
-                email:email,
-                name:name,
-                phoneNo:phoneNo,
-                password:hash
-            });
+            if(!err){
+                await user.create({
+                    email:email,
+                    name:name,
+                    phoneNo:phoneNo,
+                    password:hash
+                });
                 res.status(201).json({success:true,message:'user successfully signup'})
+            }else{
+                console.log(err)
+            }
+            
             }catch(err){
                 res.status(500).json({success:false,message:'email already exist!'})
             }

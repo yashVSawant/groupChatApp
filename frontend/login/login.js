@@ -5,11 +5,12 @@ login.addEventListener('click',async(e)=>{
         try{
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            console.log( email, phoneNo, password)
+            console.log( email, password)
             const postUserInfo = await axios.post('http://localhost:3000/user/login',{email, password});
             alert(postUserInfo.data.message);
-            
+            localStorage.setItem('grpChatappToken',postUserInfo.data.token);
+            location.href='../signup/signup.html';
         }catch(err){
-            alert(err.response.data.message);
+            console.log(err);
         }
 })
