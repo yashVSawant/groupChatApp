@@ -1,5 +1,5 @@
 body{
-    background-color: rgb(228, 204, 168);
+    background-color: rgb(255, 255, 255);
 }
 #container{
     margin-inline:25% ;
@@ -10,4 +10,11 @@ body{
 #chat{
     width: 80%;
     align-items: start;
+}
+#chat div{
+    background-color: rgb(248, 255, 146);
+    border-radius: 5px;
+    margin: 2px;
+    padding: 3px;
+    padding-left: 6px;
 }

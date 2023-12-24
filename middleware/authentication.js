@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../model/user');
+const User = require('../models/user');
 require('dotenv').config();
 
 const authenticate = async(req,res,next)=>{
@@ -9,8 +9,10 @@ const authenticate = async(req,res,next)=>{
         // console.log("get>>>>",token)
         const user = jwt.verify(token,process.env.TOKEN);
         // console.log('token >>>',user);
-        const getUser = await User.findByPk(user.userId);
+        const getUser = await User.findByPk(user.id);
         req.user = getUser;
+        // console.log(req.user);
+        if(req.user==null)throw new Error('invalid user!')
         next();
     }catch(err){
         res.status(401).json({success:false,message:'something went wrong in authentication'});

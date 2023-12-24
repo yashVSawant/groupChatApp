@@ -41,7 +41,7 @@ exports.loginUser = async(req,res,next)=>{
                     res.status(500).json({success:false ,message:'something went wrong !'})                   
                 }
                 if(result){
-                    res.status(201).json({success:true ,message:'User login succesfull',token:generateAccessToken(checkUser.id,checkUser.name,checkUser.phoneNo)})
+                    res.status(201).json({success:true ,message:'User login succesfull',token:generateAccessToken(checkUser.email,checkUser.name,checkUser.phoneNo)})
                 }else{
                     res.status(401).json({success:false ,message:'incorrect password !'})
                 }
@@ -60,5 +60,6 @@ function isstringinvalid(getString){
 }
 
 function generateAccessToken(id,name,phoneNo){
-    return jwt.sign({userId:id , name:name ,phoneNo:phoneNo},process.env.TOKEN);
+    // console.log('id:,',id);
+    return jwt.sign({name:name,id:id,phoneNo:phoneNo},process.env.TOKEN);
 }
