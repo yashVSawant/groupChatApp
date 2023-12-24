@@ -4,7 +4,7 @@ const sequelize= require('../util/database');
 
 const message = sequelize.define('Message',{
     text:{
-        type:Sequelize.STRING,
+        type:Sequelize.TEXT,
         allowNul:false
     }
 });

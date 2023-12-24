@@ -1,7 +1,18 @@
 const message = require('../models/message');
+const user = require('../models/user');
 
-exports.getMessage = (req,res,next)=>{
-    
+exports.getMessages = async(req,res,next)=>{
+    try{
+        const chats = await message.findAll({
+            attributes:['text','UserEmail'],
+            include: [{ model: user, attributes: ['name'] }]
+        })
+        res.status(200).json({chats});
+    }catch(err){
+        console.log(err)
+        res.status(404).json({success:false,err})
+    }
+
 }
 
 exports.postMessage = async(req,res,next)=>{

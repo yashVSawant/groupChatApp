@@ -1,14 +1,13 @@
-const chat = document.getElementById('chat');
+const chatDiv = document.getElementById('chat');
 const token = localStorage.getItem('grpChatappToken');
 const send = document.getElementById('send');
 
 window.addEventListener('DOMContentLoaded',async()=>{
-    console.log(token)
-    printMessage('joined')
-for(let i=0 ;i<10 ;i++){
-    printMessage('hiii');
-}
-    
+    const chats = await axios.get('http://localhost:3000/message/getMessages',{headers:{'Authorization':token}});
+    chats.data.chats.forEach((item)=>{
+        printMessage(item.text ,item.User.name)
+        // console.log(item)
+    })   
 })
 
 send.addEventListener('click',async()=>{
@@ -18,9 +17,8 @@ send.addEventListener('click',async()=>{
 })
 
 
-function printMessage(message){
+function printMessage(message , textedBy){
     const msg = document.createElement('div');
-    msg.innerText=message;
-    // console.log('....!')
-    chat.appendChild(msg);
+    msg.innerText=`${textedBy} : ${message}`;
+    chatDiv.appendChild(msg);
 }
