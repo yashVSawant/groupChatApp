@@ -1,19 +1,21 @@
 const message = require('../models/message');
 const user = require('../models/user');
+const Sequelize = require('sequelize')
 
 exports.getMessages = async(req,res,next)=>{
     try{
-        const count = req.query.count;
-        // console.log('count>>>',count)
-        const totalMsg = await message.count();
-        // console.log(totalMsg)
-        if(count!=totalMsg){
+        const lastMsgId = +req.query.lastMsgId;
+        console.log(lastMsgId )
             const chats = await message.findAll({
-                offset:+count,
-                attributes:['text','UserEmail'],
+                where:{id:{
+                    [Sequelize.Op.gt]:lastMsgId
+                }},
+                attributes:['id','text','UserEmail'],
                 include: [{ model: user, attributes: ['name'] }]
             })
-            res.status(200).json({success:true,chats,totalMsg});
+            console.log(chats)
+        if(chats.length!==0){    
+            res.status(200).json({success:true,chats});
         }else{
             res.status(200).json({success:false});
         }
