@@ -70,6 +70,18 @@ exports.createGroup = async(req,res,next)=>{
     }
 }
 
+exports.addUserToGroup = async(req,res,next)=>{
+    try{
+        const {memberPhoneNo,groupId} = req.body;
+        const getUserToAdd = await user.findOne({where:{phoneNo:0+memberPhoneNo}})
+        await userGroup.create({UserId:getUserToAdd.id,GroupId:groupId});
+        
+        res.status(201).json({success:true})
+    }catch(err){
+        res.status(404).json({success:false})
+    }
+}
+
 function isstringinvalid(getString){
    return getString === ''?true:false;
 }

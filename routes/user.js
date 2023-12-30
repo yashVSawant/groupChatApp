@@ -8,5 +8,6 @@ const authentication = require('../middleware/authentication');
 route.post('/signup',userController.signupUser);
 route.post('/login',userController.loginUser);
 route.post('/createGroup',authentication.authenticate,userController.createGroup);
+route.post('/addUserToGroup',authentication.authenticate,userController.addUserToGroup);
 
 module.exports = route;

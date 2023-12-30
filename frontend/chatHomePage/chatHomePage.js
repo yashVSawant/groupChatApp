@@ -4,6 +4,8 @@ const send = document.getElementById('inputDiv');
 const showGroups = document.getElementById('showGroups');
 const createGroup = document.getElementById('createGroup');
 const creatNewGroup = document.getElementById('creatNewGroup');
+const add = document.getElementById('add');
+const addNewMember = document.getElementById('addNewMember');
 
 
 window.addEventListener('DOMContentLoaded',async()=>{ 
@@ -62,45 +64,73 @@ creatNewGroup.addEventListener('click',async()=>{
 
 showGroups.addEventListener('click',async(e)=>{
     if(e.target.classList.contains('group')){
+        chatDiv.innerHTML='';
         try{
-            console.log(e.target.parentNode.id);
+            // console.log(e.target.parentNode.id);
             const groupId = e.target.parentNode.id;
             createSendButton(groupId);
-            // let oldChats =localStorage.getItem('chats');
-            // let oldChatsArray = oldChats?JSON.parse(oldChats):[];
-            // // console.log(oldChatsArray);
-            // oldChatsArray.forEach((item)=>{
-            //     printMessage(item.text ,item.User.name)
-            //     // console.log(item)
-            //     }) 
-            // let lastMsgId =oldChatsArray.length!=0? oldChatsArray[oldChatsArray.length-1].id : -1;
+            let oldChats =localStorage.getItem(`chats${groupId}`);
+            let oldChatsArray = oldChats?JSON.parse(oldChats):[];
+            // console.log(oldChatsArray);
+            oldChatsArray.forEach((item)=>{
+                printMessage(item.text ,item.name)
+                // console.log(item)
+                }) 
+            let lastMsgId =oldChatsArray.length!=0? oldChatsArray[oldChatsArray.length-1].id : -1;
             // console.log(lastMsgId)
             // setInterval(async()=>{
-            const chats = await axios.get(`http://localhost:3000/message/getMessages?lastMsgId=${-1}&groupId=${groupId}`,{headers:{'Authorization':token}});
-            console.log(chats.data.groupChats)
+            const chats = await axios.get(`http://localhost:3000/message/getMessages?lastMsgId=${lastMsgId}&groupId=${groupId}`,{headers:{'Authorization':token}});
+            // console.log(chats.data.success)
             if(chats.data.success){
                     chats.data.groupChats.forEach((item)=>{
-                    printMessage(item.text ,'yash')
+                    printMessage(item.text ,item.name)
                     // console.log(item.text)
                     }) 
                     
-                    // oldChatsArray = oldChatsArray.concat(chats.data.chats)
-                    // lastMsgId =oldChatsArray.length!=0? oldChatsArray[oldChatsArray.length-1].id : -1;
-                    // console.log('....>',oldChatsArray.length>10)
-                    // while(oldChatsArray.length>10){
-                    //     oldChatsArray.shift();
-                    // }
-                    // localStorage.setItem('chats',JSON.stringify(oldChatsArray))
+                    oldChatsArray = oldChatsArray.concat(chats.data.groupChats)
+                    console.log(oldChatsArray);
+                    lastMsgId =oldChatsArray.length!=0? oldChatsArray[oldChatsArray.length-1].id : -1;
+                    console.log('....>',lastMsgId);
+                    while(oldChatsArray.length>10){
+                        oldChatsArray.shift();
+                    }
+                    localStorage.setItem(`chats${groupId}`,JSON.stringify(oldChatsArray));
             }
             
             
-        // },1000)
+            
+            // },1000)
         }catch(err){
             console.log(err);
         }
 
     }
 })
+
+add.addEventListener('click',async(e)=>{
+    const mainDiv = document.getElementById('mainDiv');
+    const addmember = document.getElementById('addmember');
+
+    mainDiv.style.display='none';
+    addmember.style.display='inline';
+})
+
+addNewMember.addEventListener('click',async()=>{
+    try{
+        const memberPhoneNo = document.getElementById('memberPhoneNo').value;
+        const groupId = 4;
+        console.log(memberPhoneNo);
+        await axios.post('http://localhost:3000/user/addUserToGroup',{memberPhoneNo,groupId},{headers:{'Authorization':token}})
+        const mainDiv = document.getElementById('mainDiv');
+        const addmember = document.getElementById('addmember');
+
+        mainDiv.style.display='flex';
+        addmember.style.display='none';
+    }catch(err){
+        console.log(err);
+    }
+})
+
 
 function printMessage(message , textedBy){
     const msg = document.createElement('div');

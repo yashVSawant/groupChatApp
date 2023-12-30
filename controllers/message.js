@@ -8,16 +8,11 @@ exports.getMessages = async(req,res,next)=>{
     try{
         const lastMsgId = +req.query.lastMsgId;
         const groupId = +req.query.groupId;
-        console.log(groupId)
-        // console.log(lastMsgId )
-            // const groupChats = await message.findAll({
-            //     where:{id:{
-            //         [Sequelize.Op.gt]:lastMsgId
-            //     }},
-            //     attributes:['id','text'],
-            //     include: [{ model: userGroup, attributes: ['UserId','GroupId'] }]
-            // })
+
             const groupChats = await message.findAll({
+                where:{id:{
+                            [Sequelize.Op.gt]:lastMsgId
+                        }},
                 include:[
                     {
                         model:userGroup,
@@ -43,7 +38,7 @@ exports.postMessage = async(req,res,next)=>{
     try{
         const {text,groupId} = req.body;
         const getUserGroup = await userGroup.findOne({where:{UserId:req.user.id,GroupId:groupId}})
-        const Msg = await message.create({text,UserGroupId:getUserGroup.id})
+        const Msg = await message.create({text,UserGroupId:getUserGroup.id,name:req.user.name});
         res.status(201).json({Msg})
     }catch(err){
         // console.log(err)
