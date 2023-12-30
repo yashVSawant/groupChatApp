@@ -12,9 +12,15 @@ const messageRoute = require('./routes/message');
 
 const user = require('./models/user');
 const message = require('./models/message');
+const group = require('./models/group');
+const userGroup = require('./models/userGroup');
 
-user.hasMany(message);
-message.belongsTo(user);
+user.belongsToMany(group,{through: userGroup});
+group.belongsToMany(user,{through: userGroup});
+user.hasMany(group);
+group.belongsTo(user);
+userGroup.hasMany(message);
+message.belongsTo(userGroup);
 
 app.use(helmet({
     contentSecurityPolicy: false,

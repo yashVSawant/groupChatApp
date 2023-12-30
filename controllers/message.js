@@ -1,21 +1,33 @@
 const message = require('../models/message');
 const user = require('../models/user');
+const group = require('../models/group');
+const userGroup = require('../models/userGroup');
 const Sequelize = require('sequelize')
 
 exports.getMessages = async(req,res,next)=>{
     try{
         const lastMsgId = +req.query.lastMsgId;
-        console.log(lastMsgId )
-            const chats = await message.findAll({
-                where:{id:{
-                    [Sequelize.Op.gt]:lastMsgId
-                }},
-                attributes:['id','text','UserEmail'],
-                include: [{ model: user, attributes: ['name'] }]
-            })
-            console.log(chats)
-        if(chats.length!==0){    
-            res.status(200).json({success:true,chats});
+        const groupId = +req.query.groupId;
+        console.log(groupId)
+        // console.log(lastMsgId )
+            // const groupChats = await message.findAll({
+            //     where:{id:{
+            //         [Sequelize.Op.gt]:lastMsgId
+            //     }},
+            //     attributes:['id','text'],
+            //     include: [{ model: userGroup, attributes: ['UserId','GroupId'] }]
+            // })
+            const groupChats = await message.findAll({
+                include:[
+                    {
+                        model:userGroup,
+                        where:{GroupId:groupId}
+                    }
+                ]
+              })
+    
+        if(groupChats.length!==0){  
+            res.status(200).json({success:true,groupChats});
         }else{
             res.status(200).json({success:false});
         }
@@ -29,11 +41,26 @@ exports.getMessages = async(req,res,next)=>{
 
 exports.postMessage = async(req,res,next)=>{
     try{
-        const {text} = req.body;
-        const Msg = await message.create({text,UserEmail:req.user.email})
+        const {text,groupId} = req.body;
+        const getUserGroup = await userGroup.findOne({where:{UserId:req.user.id,GroupId:groupId}})
+        const Msg = await message.create({text,UserGroupId:getUserGroup.id})
         res.status(201).json({Msg})
     }catch(err){
         // console.log(err)
         res.status(400).json({success:false,error:err})
+    }
+}
+
+exports.getGroups = async(req,res,next)=>{
+    try{
+        const getUserGroups = await group.findAll({include: [{
+            model: user,
+            through: userGroup,
+            where: { id: req.user.id },
+          }],});
+        // console.log(getUserGroups);
+        res.status(200).json({success:true,groups:getUserGroups});
+    }catch(err){
+        res.status(400).json({success:false});
     }
 }

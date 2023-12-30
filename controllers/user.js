@@ -1,4 +1,6 @@
 const user = require('../models/user');
+const group = require('../models/group');
+const userGroup = require('../models/userGroup');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
@@ -41,7 +43,7 @@ exports.loginUser = async(req,res,next)=>{
                     res.status(500).json({success:false ,message:'something went wrong !'})                   
                 }
                 if(result){
-                    res.status(201).json({success:true ,message:'User login succesfull',token:generateAccessToken(checkUser.email,checkUser.name,checkUser.phoneNo)})
+                    res.status(201).json({success:true ,message:'User login succesfull',token:generateAccessToken(checkUser.id,checkUser.name,checkUser.phoneNo)})
                 }else{
                     res.status(401).json({success:false ,message:'incorrect password !'})
                 }
@@ -52,6 +54,19 @@ exports.loginUser = async(req,res,next)=>{
     }catch(err){
         // console.log(err)
         res.status(500).json({success:false,message:err});
+    }
+}
+
+exports.createGroup = async(req,res,next)=>{
+    try{
+        const {name} = req.body;
+        // console.log('name..>',name);
+        const groupInstace =  await group.create({name,UserId:req.user.id});
+        await userGroup.create({GroupId:groupInstace.id,UserId:req.user.id});
+        res.status(201).json({success:true});
+    }catch(err){
+        // console.log(err)
+        res.status(400).json({success:false,error:err});
     }
 }
 
