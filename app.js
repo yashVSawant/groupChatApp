@@ -17,10 +17,14 @@ const userGroup = require('./models/userGroup');
 
 user.belongsToMany(group,{through: userGroup});
 group.belongsToMany(user,{through: userGroup});
-user.hasMany(group);
-group.belongsTo(user);
-userGroup.hasMany(message);
-message.belongsTo(userGroup);
+userGroup.belongsTo(user);
+userGroup.belongsTo(group);
+user.hasMany(userGroup);
+group.hasMany(userGroup);
+user.hasMany(message);
+message.belongsTo(user);
+group.hasMany(message);
+message.belongsTo(group);
 
 app.use(helmet({
     contentSecurityPolicy: false,

@@ -1,7 +1,5 @@
 const message = require('../models/message');
 const user = require('../models/user');
-const group = require('../models/group');
-const userGroup = require('../models/userGroup');
 const Sequelize = require('sequelize')
 
 exports.getMessages = async(req,res,next)=>{
@@ -12,15 +10,17 @@ exports.getMessages = async(req,res,next)=>{
             const groupChats = await message.findAll({
                 where:{id:{
                             [Sequelize.Op.gt]:lastMsgId
-                        }},
-                include:[
-                    {
-                        model:userGroup,
-                        where:{GroupId:groupId}
-                    }
-                ]
+                        },
+                        GroupId:groupId
+                    },
+                include: [
+                        {
+                          model: user, // Assuming you have a User model
+                          attributes: ['name'] // Specify the attributes you want to retrieve
+                        }]
+               
               })
-    
+    // console.log(groupChats);
         if(groupChats.length!==0){  
             res.status(200).json({success:true,groupChats});
         }else{
@@ -37,8 +37,7 @@ exports.getMessages = async(req,res,next)=>{
 exports.postMessage = async(req,res,next)=>{
     try{
         const {text,groupId} = req.body;
-        const getUserGroup = await userGroup.findOne({where:{UserId:req.user.id,GroupId:groupId}})
-        const Msg = await message.create({text,UserGroupId:getUserGroup.id,name:req.user.name});
+        const Msg = await message.create({text,GroupId:groupId,UserId:req.user.id});
         res.status(201).json({Msg})
     }catch(err){
         // console.log(err)
@@ -46,16 +45,3 @@ exports.postMessage = async(req,res,next)=>{
     }
 }
 
-exports.getGroups = async(req,res,next)=>{
-    try{
-        const getUserGroups = await group.findAll({include: [{
-            model: user,
-            through: userGroup,
-            where: { id: req.user.id },
-          }],});
-        // console.log(getUserGroups);
-        res.status(200).json({success:true,groups:getUserGroups});
-    }catch(err){
-        res.status(400).json({success:false});
-    }
-}

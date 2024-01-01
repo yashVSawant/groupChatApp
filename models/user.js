@@ -3,15 +3,20 @@ const Sequelize = require('sequelize');
 const sequelize = require('../util/database');
 
 const user = sequelize.define('User',{
-    email:{
-        type:Sequelize.STRING,
-        allowNull:false
-    },
     name:{
         type:Sequelize.STRING,
         allowNull:false
     },
-    phoneNo:Sequelize.STRING,
+    email:{
+        type:Sequelize.STRING,
+        allowNull:false,
+        unique:true
+    },
+    phoneNo:{
+        type:Sequelize.STRING,
+        allowNull:false,
+        unique:true
+    },
     password:Sequelize.STRING
 });
 
