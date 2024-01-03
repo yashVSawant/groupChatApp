@@ -13,5 +13,6 @@ route.get('/getGroups',authentication.authenticate,userController.getGroups);
 route.get('/getMembersInGroup',authentication.authenticate,userController.getMembersInGroup)
 route.delete('/removeFromGroup',authentication.authenticate,userController.removeMember)
 route.put('/makeAdmin',authentication.authenticate,userController.makeAdmin)
+route.get('/search',authentication.authenticate,userController.searchUsers)
 
 module.exports = route;

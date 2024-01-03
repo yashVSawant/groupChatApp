@@ -75,7 +75,7 @@ exports.addUserToGroup = async(req,res,next)=>{
     try{
         const {memberInfo,groupId} = req.body;
         const checkIfAdminReq = await userGroup.findOne({where:{UserId:req.user.id,GroupId:groupId}});
-        console.log(checkIfAdminReq.isAdmin);
+        // console.log(checkIfAdminReq.isAdmin);
         if(checkIfAdminReq.isAdmin){
             const findUserToAddByEmail =   user.findOne({where:{email:memberInfo}})
             const findUserToAddByNo =   user.findOne({where:{phoneNo:memberInfo}})
@@ -118,6 +118,30 @@ exports.getMembersInGroup = async(req,res,next)=>{
     }
 }
 
+exports.searchUsers = async(req,res,next)=>{
+    try{
+        const {searchMember} = req.query;
+        // console.log(searchMember);
+        const findByName = user.findAll({where:{name:searchMember},attributes:['id','name','phoneNo']})
+        const findByEmail = user.findAll({where:{email:searchMember},attributes:['id','name','phoneNo']})
+        const findByPhone = user.findAll({where:{phoneNo:searchMember},attributes:['id','name','phoneNo']})
+        const [ByName,ByEmail,ByPhone] = await Promise.all([findByName,findByEmail,findByPhone])
+        // console.log(ByName,ByEmail,ByPhone)
+        if(ByName.length>0){
+            res.status(200).json({success:true,users:ByName})
+        }else if(ByEmail.length>0){
+            res.status(200).json({success:true,users:ByEmail})
+        }else if(ByPhone.length>0){
+            res.status(200).json({success:true,users:ByPhone})
+        }else{
+            res.status(200).json({success:true,users:''})
+        }
+        
+    }catch(err){
+        res.status(400).json({success:false})
+    }
+}
+
 exports.getGroups = async(req,res,next)=>{
     try{
         const getUserGroups = await userGroup.findAll({
@@ -146,6 +170,7 @@ exports.removeMember = async(req,res,next)=>{
         await removeUserFromGroup.destroy();
         res.status(201).json({success:true});
     }catch(err){
+        console.log(err)
         res.status(400).json({sucess:false})
     }
 }
