@@ -63,8 +63,8 @@ exports.createGroup = async(req,res,next)=>{
         const {name} = req.body;
         // console.log('name..>',name);
         const groupInstace =  await group.create({name,UserId:req.user.id});
-        await userGroup.create({GroupId:groupInstace.id,UserId:req.user.id,isAdmin:true});
-        res.status(201).json({success:true});
+        const getNewGroup = await userGroup.create({GroupId:groupInstace.id,UserId:req.user.id,isAdmin:true});
+        res.status(201).json({success:true,group:getNewGroup});
     }catch(err){
         // console.log(err)
         res.status(400).json({success:false,error:err});

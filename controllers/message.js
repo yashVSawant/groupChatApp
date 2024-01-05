@@ -2,6 +2,7 @@ const message = require('../models/message');
 const user = require('../models/user');
 const Sequelize = require('sequelize')
 
+
 exports.getMessages = async(req,res,next)=>{
     try{
         const lastMsgId = +req.query.lastMsgId;
