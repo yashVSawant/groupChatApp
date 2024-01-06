@@ -10,6 +10,7 @@ const app = express();
 // const server = http.createServer(app);
 
 // const io = socketIo(server);
+const cronJob = require('./controllers/cronJob')
 
 const sequelize = require('./util/database');
 const userRoute = require('./routes/user');
@@ -17,6 +18,7 @@ const messageRoute = require('./routes/message');
 
 const user = require('./models/user');
 const message = require('./models/message');
+const archivMessage = require('./models/archiveMessages');
 const group = require('./models/group');
 const userGroup = require('./models/userGroup');
 const imageUrl = require('./models/imageUrl');
@@ -31,6 +33,12 @@ user.hasMany(message);
 message.belongsTo(user);
 group.hasMany(message);
 message.belongsTo(group);
+
+user.hasMany(archivMessage);
+archivMessage.belongsTo(user);
+group.hasMany(archivMessage);
+archivMessage.belongsTo(group);
+
 group.hasMany(imageUrl);
 imageUrl.belongsTo(group);
 
