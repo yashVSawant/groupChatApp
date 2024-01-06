@@ -1,5 +1,6 @@
 // const message = require("../../models/message");
 
+// const selectedFile = ref();
 const host = 'http://localhost:3000';
 const socket = io(host);
 const chatDiv = document.getElementById('chat');
@@ -57,13 +58,30 @@ window.addEventListener('DOMContentLoaded',async()=>{
 })
 
 send.addEventListener('click',async(e)=>{
+
     if(e.target.classList.contains('send')){
         try{
             const groupId = -1*(e.target.id);
+            console.log('>>>>>',groupId)
             const text = document.getElementById('text').value;
-            // printMessage(text , 'you', groupId);
-            await axios.post(`${host}/message/postMessage`,{text,groupId},{headers:{'Authorization':token}});
+            const file = document.getElementById('file').files[0];
+        //    console.log(file);
+        
+            if(text){
+                await axios.post(`${host}/message/postMessage`,{text,groupId},{headers:{'Authorization':token}});
+            }
+            
+            if(file){
+                console.log('>>>>>',file)
+                const formData = new FormData();
+                formData.append('groupId', groupId);
+                formData.append('file', file);
+                await axios.post(`${host}/message/postFile`,formData,{headers:{'Authorization':token,'Content-Type': 'multipart/form-data'},'enctype':"multipart/form-data"});
+
+                
+            }
             document.getElementById('text').value ='';
+            document.getElementById('file').value='';
             await socket.emit('send-message',groupId);
             const lastMsgId = getLastMsg(groupId);
             console.log(lastMsgId);
@@ -106,22 +124,26 @@ creatNewGroup.addEventListener('click',async()=>{
 showGroups.addEventListener('click',async(e)=>{
     if(e.target.classList.contains('group')){
         try{
-            // console.log(e.target.parentNode.id);
+            // console.log();
      const groupId = e.target.parentNode.id;
      const groupDiv = document.getElementById(`${groupId}`);
      groupDiv.style.backgroundColor='white'
-     chatDiv.innerHTML=``;
+     chatDiv.innerHTML=`<h3>${e.target.parentNode.childNodes[0].innerText} :</h3>`;
      chatDiv.className=`${groupId}`
      createSendButton(groupId);
-     // localStorage.setItem(`chats${groupId}`,'');
+    //  localStorage.setItem(`chats${groupId}`,'');
      let oldChats =localStorage.getItem(`chats${groupId}`);
      
      oldChatsArray = oldChats?JSON.parse(oldChats):[];
-     // console.log(oldChatsArray);
+    //  console.log(oldChatsArray);
      oldChatsArray.forEach((item)=>{
-         printMessage(item.text ,item.User.name ,groupId);
-         // console.log(item)
-         }) 
+        if(!item.imageUrl){
+            printMessage(item.text ,item.User.name ,groupId);
+            // console.log(item)
+        }else{
+            displayImage(item.imageUrl ,item.User.name ,groupId);
+        } 
+    })
      const lastMsgId = getLastMsg(groupId);
      displayMessage(groupId,lastMsgId);
         }catch(err){
@@ -231,6 +253,16 @@ function printMessage(message , textedBy ,id){
     // console.log(chatDiv.classList.value)
 }
 
+function displayImage(imageUrl,textedBy ,id){
+    const msg = document.createElement('div');
+    msg.innerHTML=`${textedBy} : <img src="${imageUrl}" alt="image" width="100" height="80">`;
+    chatDiv.appendChild(msg);
+}
+
+function saveImageLocally(){
+    
+}
+
 function displayGroups(name,id, isAdmin){
     // console.log(isAdmin);
     const newDiv = document.createElement('div');
@@ -249,8 +281,11 @@ function displayGroups(name,id, isAdmin){
 
 function createSendButton(id){
     send.innerHTML=
-    `<input type="text" id="text">
-    <button class="send" id=${-id}>send</button>`
+    `
+    <input type="text" id="text">
+    <input type="file" id="file" name="file" multiple="multiple" accept="image/*,video/*">
+    <button type='submit' class="send" id=${-id}>send</button>
+    `
 }
 
 function displayMembers(name,id,isAdmin){
@@ -300,13 +335,17 @@ async function addUserInGroup(memberInfo,groupId){
 
 async function displayMessage(groupId,lastMsgId){
     
-    //  console.log(lastMsgId)
+     console.log(lastMsgId)
      // setInterval(async()=>{
      const chats = await axios.get(`${host}/message/getMessages?lastMsgId=${lastMsgId}&groupId=${groupId}`,{headers:{'Authorization':token}});
-    //  console.log(chats.data.success);
+     console.log(chats.data.success);
      if(chats.data.success){
              chats.data.groupChats.forEach((item)=>{
-             printMessage(item.text ,item.User.name ,groupId)
+                if(!item.imageUrl){
+                    printMessage(item.text ,item.User.name ,groupId);
+                }else{
+                    displayImage(item.imageUrl ,item.User.name ,groupId);
+                }
              // console.log(item)
              }) 
              
@@ -319,7 +358,7 @@ async function displayMessage(groupId,lastMsgId){
              }
              localStorage.setItem(`chats${groupId}`,JSON.stringify(oldChatsArray));
      }
-     // localStorage.setItem(`chats${groupId}`,'');
+    //  localStorage.setItem(`chats${groupId}`,'');
      
      
      // },1000)

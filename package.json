@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "aws-sdk": "^2.1530.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
@@ -8,11 +9,13 @@
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
     "mysql2": "^3.6.5",
     "node-html-parser": "^6.1.12",
     "sequelize": "^6.35.2",
     "socket.io": "^4.7.2",
-    "socket.io-client": "^4.7.2"
+    "socket.io-client": "^4.7.2",
+    "vue": "^3.4.5"
   },
   "scripts": {
     "start": "nodemon app.js"

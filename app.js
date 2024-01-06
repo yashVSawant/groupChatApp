@@ -19,6 +19,7 @@ const user = require('./models/user');
 const message = require('./models/message');
 const group = require('./models/group');
 const userGroup = require('./models/userGroup');
+const imageUrl = require('./models/imageUrl');
 
 user.belongsToMany(group,{through: userGroup});
 group.belongsToMany(user,{through: userGroup});
@@ -30,11 +31,14 @@ user.hasMany(message);
 message.belongsTo(user);
 group.hasMany(message);
 message.belongsTo(group);
+group.hasMany(imageUrl);
+imageUrl.belongsTo(group);
 
 app.use(helmet({
     contentSecurityPolicy: false,
   }))
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded())
 app.use(cors({
     origin:'*',
     methods:['GET','POST','DELETE','PUT']
