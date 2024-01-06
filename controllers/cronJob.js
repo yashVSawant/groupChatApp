@@ -6,7 +6,7 @@ const archivMessage = require('../models/archiveMessages');
 const message = require('../models/message');
 
 const job = new CronJob(
-	'* * * * * ', // cronTime
+	'0 2 * * * ', // cronTime
 	async function () {
 		// console.log('one', new Date());
         const currentDate = new Date();
