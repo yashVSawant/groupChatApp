@@ -8,6 +8,9 @@
 </head>
 <body>
     <div id="newGroup" style="display: none;">
+        <nav>
+            <button id="backFromCreate">Back</button>
+        </nav>
         <input type="text" id="groupName">
         <button id="creatNewGroup">create</button>
     </div>
@@ -15,49 +18,47 @@
         <nav>
             <button id="backFromAdd">Back</button>
         </nav>
-        <input type="text" id="memberPhoneNo">
-        <button id="addNewMember">Add</button>
+        <!-- <input type="text" id="memberPhoneNo">
+        <button id="addNewMember">Add</button> -->
         <hr>
-        <input type="text" id="searchMember">
+        <!-- <input type="text" id="searchMember">
         <button id="search">search</button>
         <div id="showSearchedUsers">
 
-        </div>
+        </div> -->
     </div>
     <div id="getMembers" style="display: none;">
         <nav>
             <button id="backFromMember">Back</button>
         </nav>
-        <div id="getMembersInfo">
-
-        </div>
+        <!-- <div id="getMembersInfo"></div> -->
         
     </div>
-    
-    <div id="mainDiv">
-        <div id="groupsDiv">
-            <nav>
+    <div id="div">
+        <nav id="nav">
+            <h1>chat App</h1>
+            <div id="menu">
                 <button id="createGroup">create group</button>
-                <!-- <button id="add">Add</button> -->
-            </nav>
-            <hr>
-            <div id="showGroups">
-                
+                <button id="invite">Invite</button>
             </div>
-        </div>
-        <div id="container">
-            <div>
-                <h1>chat App</h1>
-                <h3 id="showOpneGroup"></h3>
-                <div id="chat">
-
+        </nav>
+        <div id="mainDiv">
+            <div id="groupsDiv">
+                <div id="showGroups"></div>
+            </div>
+            <div id="container">
+                <div id="groupNameDIv">
+                    
                 </div>
-            </div>
-            <div id="inputDiv">
+                <div id='containerMainDiv'>
+                    <div id="chat"></div>
                 
+                    <div id="inputDiv"></div>
+                </div>
             </div>
         </div>
     </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
     <!-- <script type="module" src="/node_modules/vue/dist/"></script> -->
     <script type="module" src="/node_modules/socket.io-client/dist/socket.io.js"></script>

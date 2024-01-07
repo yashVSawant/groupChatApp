@@ -21,10 +21,10 @@ exports.getMessages = async(req,res,next)=>{
                     },
                 include: [
                         {
-                          model: user, // Assuming you have a User model
-                          attributes: ['name'] // Specify the attributes you want to retrieve
-                        }]
-               
+                          model: user, 
+                          attributes: ['name','phoneNo'] 
+                        }],
+               attributes:['GroupId','text','imageUrl','id']
               })
     // console.log(groupChats);
         if(groupChats.length!==0){  

@@ -190,6 +190,10 @@ exports.makeAdmin = async(req,res,next)=>{
     }
 }
 
+exports.getPhoneNo = async(req,res,next)=>{
+    res.status(200).json({userPhoneNo:req.user.phoneNo});
+}
+
 function isstringinvalid(getString){
    return getString === ''?true:false;
 }

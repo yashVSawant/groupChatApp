@@ -11,13 +11,21 @@ const createGroup = document.getElementById('createGroup');
 const creatNewGroup = document.getElementById('creatNewGroup');
 const add = document.getElementById('add');
 const addNewMember = document.getElementById('addNewMember');
-const getMembersInfo = document.getElementById('getMembersInfo');
+// const getMembersInfo = document.getElementById('getMembersInfo');
 const backFromMember = document.getElementById('backFromMember');
 const backFromAdd = document.getElementById('backFromAdd');
-const search = document.getElementById('search');
-const showSearchedUsers = document.getElementById('showSearchedUsers');
+const backFromCreate = document.getElementById('backFromCreate');
+// const search = document.getElementById('search');
+// const showSearchedUsers = document.getElementById('showSearchedUsers');
 
 let oldChatsArray;
+
+async function setUserNumber(){
+    const userPhoneNo = await axios.get(`${host}/user/getPhoneNo`,{headers:{'Authorization':token}});
+    console.log(userPhoneNo.data.userPhoneNo);
+    localStorage.setItem('userPhoneNo',userPhoneNo.data.userPhoneNo)
+}
+setUserNumber();
 
 socket.on('connect',()=>{
     console.log(`connected with ${socket.id}`);
@@ -94,7 +102,7 @@ send.addEventListener('click',async(e)=>{
 })
 
 createGroup.addEventListener('click',()=>{
-    const mainDiv = document.getElementById('mainDiv');
+    const mainDiv = document.getElementById('div');
     const newGroup = document.getElementById('newGroup');
 
     mainDiv.style.display='none';
@@ -108,7 +116,7 @@ creatNewGroup.addEventListener('click',async()=>{
         // console.log();
         displayGroups(name,getGroup.data.group.GroupId,getGroup.data.group.isAdmin)
         alert('group is created successfully');
-        const mainDiv = document.getElementById('mainDiv');
+        const mainDiv = document.getElementById('div');
         const newGroup = document.getElementById('newGroup');
 
         mainDiv.style.display='flex';
@@ -125,46 +133,48 @@ showGroups.addEventListener('click',async(e)=>{
     if(e.target.classList.contains('group')){
         try{
             // console.log();
-     const groupId = e.target.parentNode.id;
-     const groupDiv = document.getElementById(`${groupId}`);
-     groupDiv.style.backgroundColor='white'
-     chatDiv.innerHTML=`<h3>${e.target.parentNode.childNodes[0].innerText} :</h3>`;
-     chatDiv.className=`${groupId}`
-     createSendButton(groupId);
-    //  localStorage.setItem(`chats${groupId}`,'');
-     let oldChats =localStorage.getItem(`chats${groupId}`);
-     
-     oldChatsArray = oldChats?JSON.parse(oldChats):[];
-    //  console.log(oldChatsArray);
-     oldChatsArray.forEach((item)=>{
-        if(!item.imageUrl){
-            printMessage(item.text ,item.User.name ,groupId);
-            // console.log(item)
-        }else{
-            displayImage(item.imageUrl ,item.User.name ,groupId);
-        } 
-    })
-     const lastMsgId = getLastMsg(groupId);
-     displayMessage(groupId,lastMsgId);
+            const groupId = e.target.parentNode.parentNode.id;
+            const groupDiv = document.getElementById(`${groupId}`);
+            groupDiv.style.backgroundColor='white'
+            document.getElementById('groupNameDIv').innerHTML=`<h3>${e.target.parentNode.childNodes[0].innerText}</h3>`;
+            chatDiv.className=`${groupId}`
+            createSendButton(groupId);
+            document.getElementById('chat').innerHTML=''
+            //  localStorage.setItem(`chats${groupId}`,'');
+
+            let oldChats =localStorage.getItem(`chats${groupId}`);
+            
+            oldChatsArray = oldChats?JSON.parse(oldChats):[];
+            //  console.log(oldChatsArray);
+            oldChatsArray.forEach((item)=>{
+                if(!item.imageUrl){
+                    printMessage(item.text ,item.User.phoneNo ,groupId);
+                    // console.log(item)
+                }else{
+                    displayImage(item.imageUrl ,item.User.phoneNo ,groupId);
+                } 
+            })
+            const lastMsgId = getLastMsg(groupId);
+            displayMessage(groupId,lastMsgId);
         }catch(err){
             console.log(err);
         }
 
     }else if(e.target.classList.contains('addMember')){
         const groupId = e.target.parentNode.id; 
-        const mainDiv = document.getElementById('mainDiv');
+        // const mainDiv = document.getElementById('div');
         const addmember = document.getElementById('addmember');
 
-        mainDiv.style.display='none';
-        addmember.style.display='inline';
-        addNewMember.addEventListener('click',async()=>{
-            try{
-                const memberInfo = document.getElementById('memberPhoneNo').value;
-                addUserInGroup(memberInfo,groupId)
-            }catch(err){
-                console.log(err);
-            }
-        })
+        // mainDiv.style.display='none';
+        // addmember.style.display='inline';
+        // addNewMember.addEventListener('click',async()=>{
+        //     try{
+        //         const memberInfo = document.getElementById('memberPhoneNo').value;
+        //         addUserInGroup(memberInfo,groupId)
+        //     }catch(err){
+        //         console.log(err);
+        //     }
+        // })
 
         addmember.addEventListener('click',async(e)=>{
             if(e.target.classList.contains('addThisMember')){
@@ -177,24 +187,32 @@ showGroups.addEventListener('click',async(e)=>{
     }else if(e.target.classList.contains('members')){
         // console.log('okay');
         const groupId = e.target.parentNode.id; 
-        const mainDiv = document.getElementById('mainDiv');
-        const getMembers = document.getElementById('getMembers');
+        // const mainDiv = document.getElementById('div');
+        const getMembers = e.target.parentNode.childNodes[0].childNodes[1]
+        getMembers.innerHTML=`<input type="text" id="searchMember">
+                                <button id="search">search</button>
+                                <div id="showSearchedUsers"></div>
+                                <div id="getMembersInfo"></div>`
 
-        mainDiv.style.display='none';
-        getMembers.style.display='inline';
-
+        // mainDiv.style.display='none';
+        // getMembers.style.display='inline';
+        const getMembersInfo = document.getElementById('getMembersInfo');
+        const search = document.getElementById('search');
+        const showSearchedUsers = document.getElementById('showSearchedUsers');
         getMembersInfo.innerHTML='';
         const membersInGroup = await axios.get(`${host}/user/getMembersInGroup?GroupId=${groupId}`,{headers:{'Authorization':token}});
         const admin = membersInGroup.data.admin;
         if(admin){
             membersInGroup.data.groupMembers.forEach((item)=>{
-                displayMembersAdmin(item.User.name,item.User.id,item.isAdmin);
+                displayMembersAdmin(item.User.name,item.User.id,item.isAdmin,getMembersInfo);
             })
         }else{
             membersInGroup.data.groupMembers.forEach((item)=>{
-                displayMembers(item.User.name,item.User.id,item.isAdmin);
+                displayMembers(item.User.name,item.User.id,item.isAdmin,getMembersInfo);
             })
         }
+        // e.target.id='backFromMember';
+        e.target.className='back';
         getMembersInfo.addEventListener('click',async(e)=>{
             try{
                 if(e.target.classList.contains('remove')){
@@ -214,18 +232,26 @@ showGroups.addEventListener('click',async(e)=>{
                 console.log(err)
             }
         })
+        search.addEventListener('click',async()=>{
+            const searchMember = document.getElementById('searchMember').value;
+                // console.log(groupId);
+            const getUsers = await axios.get(`${host}/user/search?searchMember=${searchMember}`,{headers:{'Authorization':token}})
+            getUsers.data.users.forEach((item)=>{
+                // console.log(item);
+                showSearchedNames(item.name,item.id,item.phoneNo,showSearchedUsers);
+            })
+            document.getElementById('searchMember').value="";
+        })
+    }else if(e.target.classList.contains('back')){
+        e.target.parentNode.childNodes[0].childNodes[1].innerHTML='';
+        e.target.className='members';
     }
 })
 
-search.addEventListener('click',async()=>{
-    const searchMember = document.getElementById('searchMember').value;
-        // console.log(groupId);
-    const getUsers = await axios.get(`${host}/user/search?searchMember=${searchMember}`,{headers:{'Authorization':token}})
-    getUsers.data.users.forEach((item)=>{
-        // console.log(item);
-        showSearchedNames(item.name,item.id,item.phoneNo);
-    })
 
+backFromCreate.addEventListener('click',()=>{
+    const newGroup = document.getElementById('newGroup');
+    back(newGroup);
 })
 
 backFromAdd.addEventListener('click',()=>{
@@ -233,29 +259,43 @@ backFromAdd.addEventListener('click',()=>{
         back(addmember);
 })
 
-backFromMember.addEventListener('click',()=>{
-        const getMembers = document.getElementById('getMembers');
-        back(getMembers);
+backFromMember.addEventListener('click',(e)=>{
+        
+        // const getMembers = document.getElementById('getMembers');
+        // back(getMembers);
 })
 
 function back(getDiv){
     
-    const mainDiv = document.getElementById('mainDiv');
+    const mainDiv = document.getElementById('div');
     mainDiv.style.display='flex';
     getDiv.style.display='none';
 }
 
 function printMessage(message , textedBy ,id){
     // console.log(id);
+    const no = localStorage.getItem('userPhoneNo');
     const msg = document.createElement('div');
-    msg.innerText=`${textedBy} : ${message}`;
+    if(no === textedBy){
+        msg.innerHTML=`<div>${message}</div>`;
+        msg.style.justifyContent='flex-end'
+    }else{
+        msg.innerHTML=`<div>${textedBy} : ${message}</div>`;
+    }
     chatDiv.appendChild(msg);
     // console.log(chatDiv.classList.value)
 }
 
 function displayImage(imageUrl,textedBy ,id){
+    const no = localStorage.getItem('userPhoneNo');
     const msg = document.createElement('div');
-    msg.innerHTML=`${textedBy} : <img src="${imageUrl}" alt="image" width="100" height="80">`;
+    if(no === textedBy){
+        msg.innerHTML=`<div><img src="${imageUrl}" alt="image" width="200" height="170"></div>`;
+        msg.style.justifyContent='flex-end'
+    }else{
+        msg.innerHTML=`<div>${textedBy} : <img src="${imageUrl}" alt="image" width="200" height="170"></div>`;
+    }
+    console.log(no === textedBy)
     chatDiv.appendChild(msg);
 }
 
@@ -267,14 +307,14 @@ function displayGroups(name,id, isAdmin){
     // console.log(isAdmin);
     const newDiv = document.createElement('div');
     if(isAdmin){
-        newDiv.innerHTML=`<button class='group'>${name}</button>
-        <button class='addMember'>Add</button>
-        <button class='members'>members</button>`;
+        newDiv.innerHTML=`<div><button class='group'>${name}</button><div></div></div>
+        <button class='members'>></button>`;
     }else{
-        newDiv.innerHTML=`<button class='group'>${name}</button>
-        <button class='members'>members</button>`;
+        newDiv.innerHTML=`<div><button class='group'>${name}</button><div></div></div>
+        <button class='members'>></button>`;
     }
     newDiv.id = id;
+    newDiv.className='groupDiv'
     newDiv.style.backgroundColor='white'
     showGroups.appendChild(newDiv);
 }
@@ -287,8 +327,8 @@ function createSendButton(id){
     <button type='submit' class="send" id=${-id}>send</button>
     `
 }
-
-function displayMembers(name,id,isAdmin){
+// show all members of group to user
+function displayMembers(name,id,isAdmin,getMembersInfo){
     const div = document.createElement('div');
     if(isAdmin){
         div.innerHTML=`${name}  (admin)`;
@@ -299,7 +339,8 @@ function displayMembers(name,id,isAdmin){
     div.id=id+0.1;
     getMembersInfo.appendChild(div);
 }
-function displayMembersAdmin(name,id,isAdmin){
+// show all members of group to admin
+function displayMembersAdmin(name,id,isAdmin,getMembersInfo){
     const div = document.createElement('div');
     if(isAdmin){
         div.innerHTML=`${name}  (admin)<button class='remove'>remove</button>`;
@@ -311,7 +352,7 @@ function displayMembersAdmin(name,id,isAdmin){
     getMembersInfo.appendChild(div);
 }
 
-function showSearchedNames(name,id,phone){
+function showSearchedNames(name,id,phone,showSearchedUsers){
     const div = document.createElement('div');
     div.innerHTML=`${name}-   ${phone}<button class='addThisMember'>add</button>`;
     div.id=id+0.2;
@@ -323,7 +364,7 @@ async function addUserInGroup(memberInfo,groupId){
         await axios.post(`${host}/user/addUserToGroup`,{memberInfo,groupId},{headers:{'Authorization':token}})
         // socket.emit('join-newGroup',groupId);
         socket.emit('join-group',groupId);
-        const mainDiv = document.getElementById('mainDiv');
+        const mainDiv = document.getElementById('div');
         const addmember = document.getElementById('addmember');
 
         mainDiv.style.display='flex';
@@ -341,16 +382,16 @@ async function displayMessage(groupId,lastMsgId){
      console.log(chats.data.success);
      if(chats.data.success){
              chats.data.groupChats.forEach((item)=>{
+                console.log(item);
                 if(!item.imageUrl){
-                    printMessage(item.text ,item.User.name ,groupId);
+                    printMessage(item.text ,item.User.phoneNo ,groupId);
                 }else{
-                    displayImage(item.imageUrl ,item.User.name ,groupId);
+                    displayImage(item.imageUrl ,item.User.phoneNo ,groupId);
                 }
              // console.log(item)
              }) 
              
              oldChatsArray = oldChatsArray.concat(chats.data.groupChats)
-             // console.log(oldChatsArray);
             //  lastMsgId =oldChatsArray.length!=0? oldChatsArray[oldChatsArray.length-1].id : -1;
              // console.log('....>',lastMsgId);
              while(oldChatsArray.length>10){
