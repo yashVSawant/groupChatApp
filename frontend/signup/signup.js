@@ -10,7 +10,7 @@ signup.addEventListener('click',async(e)=>{
             // console.log(name ,email, phoneNo, password)
             const postUserInfo = await axios.post('/user/signup',{name ,email, phoneNo, password});
             alert(postUserInfo.data.message);
-            location.href='../login/login.html';
+            location.href='../login/index.html';
         }catch(err){
             alert(err.response.data.message);
         }

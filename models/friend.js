@@ -2,18 +2,16 @@ const Sequelize = require('sequelize');
 
 const sequelize = require('../util/database');
 
-const userGroup = sequelize.define('userGroup',{
+const friend = sequelize.define('friend',{
     id:{
         type:Sequelize.INTEGER,
         allowNull:false,
         autoIncrement:true,
         primaryKey:true
     },
-    isAdmin: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false, 
-      }
+    friendId:{
+        type:Sequelize.INTEGER,
+        allowNull:false,
+        unique:true
+    }
 });
-
-module.exports = userGroup;

@@ -15,6 +15,7 @@ const authenticate = async(req,res,next)=>{
         if(req.user==null)throw new Error('invalid user!')
         next();
     }catch(err){
+        console.log('error from authenticate')
         res.status(401).json({success:false,message:'something went wrong in authentication'});
     }
 }

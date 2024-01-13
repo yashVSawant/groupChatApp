@@ -16,6 +16,7 @@ div{
     border-radius: 10px;
     margin:1px;
 }
+
 #div{
     background-color:  rgb(129 115 126);
     padding: 5px;
@@ -35,9 +36,10 @@ div{
     margin-inline:5px;
     background-color: rgb(241, 138, 224);
     border-radius: 15px;
+    overflow-y: auto;
 }
 #showGroups{
-    overflow: auto;
+    overflow-y: auto;
 }
 #showGroups button{
     height: 30px;
@@ -70,7 +72,7 @@ div{
     height: 50%;
 }
 #chat{
-    overflow: auto;
+    overflow-y:auto;
     width: 80%;
     height:85%;
     align-items: start;
@@ -109,6 +111,7 @@ div{
     justify-content: center;
     align-items: center;
 }
+
 /* .group{
     
 } */

@@ -6,7 +6,7 @@ const uploadToS3 = (data , filename)=>{
         secretAccessKey:process.env.IAM_USER_SECRET
     })
 
-    console.log(">>",data.buffer);
+    // console.log(">>",data.buffer);
         var param ={
             Bucket:process.env.BUCKET_NAME,
             Key: filename,

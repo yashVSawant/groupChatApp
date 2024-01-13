@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JoinGroupRequest</title>
+    <link rel="stylesheet" href="./request.css">
+</head>
+<body>
+    <nav>
+        <button id="back">back</button>
+        <div id="headDiv">
+            <h1>Requests</h1>
+        </div>
+        
+    </nav>
+    <div id="searchDiv">
+        <label>search by email , phone , group name</label>
+        <div>
+            <input type="text" id="text">
+            <button id="search">search</button>
+        </div>
+        <div id="showError"></div>
+    </div>
+    <div id="showSearchedResults">
+
+    </div>
+    <hr>
+    <div id="showRequests">
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+    <script type="module" src="/node_modules/socket.io-client/dist/socket.io.js"></script>
+    <script type="module" src="./request.js" ></script>
+</body>
+</html>

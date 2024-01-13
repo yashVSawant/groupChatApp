@@ -1,0 +1,39 @@
+body{
+    background-color: rgb(160, 129, 153);
+}
+nav{
+    display: flex;
+    background-color: rgb(243, 223, 243);
+    border-radius: 20px;
+    align-items: center;
+}
+nav div{
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+}
+#showSearchedResults{
+    margin: 20px;
+}
+#searchDiv{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    margin: 20px;
+}
+#back{
+    color: white;
+    background-color: #0a0b0c;
+    height: 50px;
+    width: 50px;
+    border-radius: 50px;
+}
+#seach{
+    color: white;
+    background-color: #0a0b0c;
+    height: 50px;
+    width: 70px;
+    border-radius: 10px;
+}

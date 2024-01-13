@@ -1,0 +1,51 @@
+body{
+    background-color: rgb(112, 92, 107);
+    font-size: medium;
+}
+div{
+    border-radius: 10px;
+    margin:7px;
+}
+nav{
+    display: flex;
+    background-color: rgb(243, 223, 243);
+    border-radius: 20px;
+    align-items: center;
+}
+nav div{
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+}
+#members div{
+    background-color: rgb(247, 186, 244);
+    padding-inline: 15px;
+}
+#exit{
+    background-color: rgb(245, 11, 11);
+    color:white;
+    width: 80px;
+    border-radius: 10px;
+}
+#back{
+    color: white;
+    background-color: #0a0b0c;
+    height: 50px;
+    width: 50px;
+    border-radius: 50px;
+
+    
+        /* margin: 4px;
+        border-radius: 19px;
+        height: 40px;
+        padding-inline: 20px;
+        font-size: 17px; */
+        
+    
+}
+#container{
+    height: 500px;
+    overflow-y: auto;
+}
