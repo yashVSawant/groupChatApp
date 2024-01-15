@@ -1,5 +1,5 @@
 const host = 'http://localhost:3000';
-const socket = io(host);
+const socket = io();
 const chatDiv = document.getElementById('chat');
 const token = localStorage.getItem('grpChatappToken');
 const send = document.getElementById('inputDiv');
@@ -12,6 +12,7 @@ const backFromMember = document.getElementById('backFromMember');
 const backFromAdd = document.getElementById('backFromAdd');
 const backFromCreate = document.getElementById('backFromCreate');
 const requests = document.getElementById('requests');
+const backFromChat = document.getElementById('backFromChat');
 
 let oldChatsArray;
 
@@ -122,6 +123,10 @@ send.addEventListener('click',async(e)=>{
     }
     
 })
+// showGroupsButton.addEventListener('click',()=>{
+//     const groupsDiv = document.getElementById('groupsDiv');
+//     groupsDiv.style.display='flex'
+// })
 
 // opening create group div
 createGroup.addEventListener('click',()=>{
@@ -154,11 +159,17 @@ creatNewGroup.addEventListener('click',async()=>{
 // individual groups features
 showGroups.addEventListener('click',async(e)=>{
     if(e.target.classList.contains('group')){
+        const container = document.getElementById('container');
+        const groupsDiv = document.getElementById('groupsDiv');
+        const nav = document.getElementById('nav');
+        nav.style.display='none'
+        groupsDiv.style.display='none'
+        container.style.display='flex'
         try{
             const groupId = e.target.parentNode.parentNode.id;
             const groupDiv = document.getElementById(`${groupId}`);
             groupDiv.style.backgroundColor='white'
-            document.getElementById('groupNameDIv').innerHTML=`<h3>${e.target.parentNode.childNodes[0].innerText}</h3>`;
+            document.getElementById('headName').innerText=`${e.target.parentNode.childNodes[0].innerText}`;
             chatDiv.className=`${groupId}`
             createSendButton(groupId);
             document.getElementById('chat').innerHTML=''
@@ -187,6 +198,14 @@ requests.addEventListener('click',async()=>{
 backFromCreate.addEventListener('click',()=>{
     const newGroup = document.getElementById('newGroup');
     back(newGroup);
+})
+backFromChat.addEventListener('click',()=>{
+        const container = document.getElementById('container');
+        const groupsDiv = document.getElementById('groupsDiv');
+        const nav = document.getElementById('nav');
+        nav.style.display='flex'
+        groupsDiv.style.display='flex'
+        container.style.display='none'
 })
 
 

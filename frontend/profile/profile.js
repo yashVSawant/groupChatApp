@@ -8,7 +8,7 @@ const back = document.getElementById('back');
 const exit = document.getElementById('exit');
 const deleteGroup = document.getElementById('delete');
 const host = "http://localhost:3000";
-const socket = io(host);
+const socket = io();
 members.innerHTML='';
 
 window.addEventListener('DOMContentLoaded',async()=>{
