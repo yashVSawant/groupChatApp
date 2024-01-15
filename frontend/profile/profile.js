@@ -6,27 +6,31 @@ const showSearchedUsers = document.getElementById(`showSearchedUsers`);
 const members = document.getElementById('members');
 const back = document.getElementById('back');
 const exit = document.getElementById('exit');
+const deleteGroup = document.getElementById('delete');
 const host = "http://localhost:3000";
 const socket = io(host);
 members.innerHTML='';
 
 window.addEventListener('DOMContentLoaded',async()=>{
-    document.getElementById('headName').innerText = groupName
-    const membersInGroup = await axios.get(`${host}/group/getMembersInGroup?GroupId=${groupId}`,{headers:{'Authorization':token}});
-    const admin = membersInGroup.data.admin;
-    console.log(membersInGroup);
-    if(admin){
-        membersInGroup.data.groupMembers.forEach((item)=>{
-            displayMembersAdmin(item.user.name,item.user.id,item.isAdmin);
-        })
-    }else{
-        membersInGroup.data.groupMembers.forEach((item)=>{
-            displayMembers(item.user.name,item.user.id,item.isAdmin);
-        })
-    }
+        try{
+            document.getElementById('headName').innerText = groupName;
+            const membersInGroup = await axios.get(`${host}/group/getMembersInGroup?GroupId=${groupId}`,{headers:{'Authorization':token}});
+            const admin = membersInGroup.data.admin;
+            console.log(membersInGroup);
+            if(admin){
+                membersInGroup.data.groupMembers.forEach((item)=>{
+                    displayMembersAdmin(item.user.name,item.user.id,item.isAdmin);
+                })
+            }else{
+                membersInGroup.data.groupMembers.forEach((item)=>{
+                    displayMembers(item.user.name,item.user.id,item.isAdmin);
+                })
+            }
+        }catch(err){
+            console.log(err);
+        }
 })
     
-
 members.addEventListener('click',async(e)=>{
     try{
         if(e.target.classList.contains('remove')){
@@ -77,8 +81,16 @@ showSearchedUsers.addEventListener('click',(e)=>{
 })
 
 exit.addEventListener('click',async()=>{
-    console.log(token)
-    await axios.delete(`${host}/group/exitFromGroup?groupId=${groupId}`,{headers:{'Authorization':token}})
+    try{
+        await axios.delete(`${host}/group/exitFromGroup?groupId=${groupId}`,{headers:{'Authorization':token}})
+        location.href='../chatHomePage/chatHomePage.html'
+    }catch(err){
+        console.log(err);
+    }
+})
+
+deleteGroup.addEventListener('click',async()=>{
+    await axios.delete(`${host}/group/delteGroup?groupId=${groupId}`,{headers:{'Authorization':token}})
     location.href='../chatHomePage/chatHomePage.html'
 })
 

@@ -12,9 +12,6 @@ const job = new CronJob(
         const currentDate = new Date();
         const oneDayAgo = new Date(currentDate);
         oneDayAgo.setDate(currentDate.getDate() - 1);
-
-        // const data = await archivMessage.findAll({where:{createdAt:{[Sequelize.Op.lt]: oneDayAgo}}});
-        // console.log(data,oneDayAgo)
         try{
             const getAllMessage = await message.findAll({where:{createdAt:{[Sequelize.Op.lt]: oneDayAgo}}});
             const storeGetMessages = getAllMessage.map((item)=>({
@@ -24,15 +21,14 @@ const job = new CronJob(
                 GroupId:item.GroupId
             }))
             await archivMessage.bulkCreate(storeGetMessages);
-            // console.log(getAllMessage);
-            message.destroy({where:{createdAt:{[Sequelize.Op.lt]: oneDayAgo}}})
+            await message.destroy({where:{createdAt:{[Sequelize.Op.lt]: oneDayAgo}}})
         }catch(err){
             console.log(err)
         }
-	}, // onTick
-	null, // onComplete
-	true, // start
-	'Asia/Kolkata' // timeZone
+	}, 
+	null, 
+	true, 
+	'Asia/Kolkata' 
 );
 
 module.exports = job;

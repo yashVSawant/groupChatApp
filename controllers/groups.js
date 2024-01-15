@@ -21,7 +21,7 @@ exports.createGroup = async(req,res,next)=>{
 exports.inviteUserInGroup = async(req,res,next)=>{
     try{
         const {phoneNo,groupId} = req.body;
-        console.log(phoneNo,groupId);
+        // console.log(phoneNo,groupId);
         const checkIfAdminReq = await userGroup.findOne({where:{userId:req.user.id,groupId:groupId}});
         // console.log(checkIfAdminReq);
         if(checkIfAdminReq.isAdmin){
@@ -57,11 +57,11 @@ exports.removeMember = async(req,res,next)=>{
         res.status(400).json({sucess:false})
     }
 }
+
 exports.exitFromGroup = async(req,res,next)=>{
     try{
         const {groupId} = req.query;
-        const getUser = await userGroup.findOne({where:{userId:req.user.id,groupId:groupId}});
-        await getUser.destroy();
+        await getUser.destroy({where:{userId:req.user.id,groupId:groupId}});
         
         res.status(201).json({success:true})
     }catch(err){
@@ -69,11 +69,22 @@ exports.exitFromGroup = async(req,res,next)=>{
     }
 }
 
+exports.deleteGroup = async(req,res,next)=>{
+    try{
+        const {groupId} = req.query;
+        await group.destroy({where:{id:groupId}});
+        await userGroup.destroy({where:{groupId:groupId}});
+
+    }catch(err){
+        console.log(err)
+    }
+}
+
 exports.getMembersInGroup = async(req,res,next)=>{
     try{
         const groupId = req.query.GroupId;
         // console.log(GroupId);
-        const isUserAdmin = await userGroup.findOne({where:{groupId,userId:req.user.id}}); 
+        const isUserAdmin = await userGroup.findOne({where:{groupId,userId:req.user.id},attributes:['isAdmin']}); 
         const admin = isUserAdmin.isAdmin;
         const groupMembers = await userGroup.findAll({where:{
                 groupId:groupId,
@@ -94,7 +105,7 @@ exports.getMembersInGroup = async(req,res,next)=>{
 exports.search = async(req,res,next)=>{
     try{
         const {text} = req.query;
-        console.log(text);
+        // console.log(text);
         const findByEmail = user.findAll({where:{email:text,id:{[Sequelize.Op.ne]:req.user.id}},attributes:['id','name','phoneNo']})
         const findByPhone = user.findAll({where:{phoneNo:text,id:{[Sequelize.Op.ne]:req.user.id}},attributes:['id','name','phoneNo']})
         const findByGroupName = userGroup.findAll({

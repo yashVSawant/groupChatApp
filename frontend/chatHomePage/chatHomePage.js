@@ -1,6 +1,3 @@
-// const message = require("../../models/message");
-
-// const selectedFile = ref();
 const host = 'http://localhost:3000';
 const socket = io(host);
 const chatDiv = document.getElementById('chat');
@@ -11,7 +8,6 @@ const createGroup = document.getElementById('createGroup');
 const creatNewGroup = document.getElementById('creatNewGroup');
 const add = document.getElementById('add');
 const addNewMember = document.getElementById('addNewMember');
-// const getMembersInfo = document.getElementById('getMembersInfo');
 const backFromMember = document.getElementById('backFromMember');
 const backFromAdd = document.getElementById('backFromAdd');
 const backFromCreate = document.getElementById('backFromCreate');
@@ -34,7 +30,7 @@ socket.on('connect',()=>{
 socket.on('recive-message',(groupId)=>{
     console.log(groupId)
     if(chatDiv.classList.value == groupId){
-        const lastMsgId = getLastMsg(groupId);
+        const lastMsgId = getLastMsgId(groupId);
         console.log(lastMsgId);
         
         displayMessage(groupId,lastMsgId);
@@ -51,8 +47,6 @@ socket.on('phone-no',(groupId)=>{
     console.log(">>>>",groupId);
     requests.style.backgroundColor='red'
 })
-
-
 
 window.addEventListener('DOMContentLoaded',async()=>{ 
     try{           
@@ -116,7 +110,7 @@ send.addEventListener('click',async(e)=>{
                 document.getElementById('text').value ='';
                 document.getElementById('file').value='';
                 await socket.emit('send-message',groupId);
-                const lastMsgId = getLastMsg(groupId);
+                const lastMsgId = getLastMsgId(groupId);
                 console.log(lastMsgId);
                 displayMessage(groupId,lastMsgId);
             }
@@ -128,6 +122,7 @@ send.addEventListener('click',async(e)=>{
     }
     
 })
+
 // opening create group div
 createGroup.addEventListener('click',()=>{
     const mainDiv = document.getElementById('div');
@@ -156,7 +151,7 @@ creatNewGroup.addEventListener('click',async()=>{
     }
 
 })
-
+// individual groups features
 showGroups.addEventListener('click',async(e)=>{
     if(e.target.classList.contains('group')){
         try{
@@ -168,21 +163,9 @@ showGroups.addEventListener('click',async(e)=>{
             createSendButton(groupId);
             document.getElementById('chat').innerHTML=''
             //  localStorage.setItem(`chats${groupId}`,'');
-
-            let oldChats =localStorage.getItem(`chats${groupId}`);
-            
-            oldChatsArray = oldChats?JSON.parse(oldChats):[];
-            //  console.log(oldChatsArray);
-            oldChatsArray.forEach((item)=>{
-                if(!item.imageUrl){
-                    printMessage(item.text ,item.user.phoneNo);
-                    // console.log(item)
-                }else{
-                    displayImage(item.imageUrl ,item.user.phoneNo ,item.text);
-                } 
-                makeCenter();
-            })
-            const lastMsgId = getLastMsg(groupId);
+            const firstMsgId = getFirstMsg(groupId);
+            displayLocalStorageMsg(groupId);
+            const lastMsgId = getLastMsgId(groupId);
             // console.log(lastMsgId,groupId)
             displayMessage(groupId,lastMsgId);
         }catch(err){
@@ -214,29 +197,45 @@ function back(getDiv){
     mainDiv.style.display='flex';
     getDiv.style.display='none';
 }
+function displayLocalStorageMsg(groupId){
+    let oldChats =localStorage.getItem(`chats${groupId}`);
+            
+            oldChatsArray = oldChats?JSON.parse(oldChats):[];
+            //  console.log(oldChatsArray);
+            oldChatsArray.forEach((item)=>{
+                if(!item.imageUrl){
+                    printMessage(item.text ,item.user.phoneNo, item.id);
+                    // console.log(item)
+                }else{
+                    displayImage(item.imageUrl ,item.user.phoneNo ,item.text , item.id);
+                } 
+                makeCenter();
+            })
+}
 //  print message
-function printMessage(message , textedBy ){
+function printMessage(message , textedBy ,id){
     // console.log(id);
     const no = localStorage.getItem('userPhoneNo');
     const msg = document.createElement('div');
     if(no === textedBy){
-        msg.innerHTML=`<div>${message}</div>`;
+        msg.innerHTML=`<div class='message' id='${id}'>${message}</div>`;
         msg.style.justifyContent='flex-end'
     }else{
-        msg.innerHTML=`<div>${textedBy} : ${message}</div>`;
+        msg.innerHTML=`<div class='message' id='${id}'>${textedBy} : ${message}</div>`;
     }
     chatDiv.appendChild(msg);
     // console.log(chatDiv.classList.value)
 }
 // display image
-function displayImage(imageUrl,textedBy ,text){
+function displayImage(imageUrl,textedBy ,text ,id){
+    // console.log(id)
     const no = localStorage.getItem('userPhoneNo');
     const msg = document.createElement('div');
     if(no === textedBy){
-        msg.innerHTML=`<div><img src="${imageUrl}" alt="image" width="250" height="220">${text}</div>`;
+        msg.innerHTML=`<div><img  class='message' id='${id}' src="${imageUrl}" alt="image" width="250" height="220">${text}</div>`;
         msg.style.justifyContent='flex-end'
     }else{
-        msg.innerHTML=`<div>${textedBy} : <img src="${imageUrl}" alt="image" width="200" height="170"></div>`;
+        msg.innerHTML=`<div>${textedBy} : <img  class='message' id='${id}' src="${imageUrl}" alt="image" width="200" height="170"></div>`;
     }
     chatDiv.appendChild(msg);
 }
@@ -270,11 +269,11 @@ async function displayMessage(groupId,lastMsgId){
     //  console.log(chats.data.success);
      if(chats.data.success){
              chats.data.groupChats.forEach((item)=>{
-                // console.log(item);
+                console.log(item);
                 if(!item.imageUrl){
-                    printMessage(item.text ,item.user.phoneNo );
+                    printMessage(item.text ,item.user.phoneNo,item.id );
                 }else{
-                    displayImage(item.imageUrl ,item.user.phoneNo ,item.text);
+                    displayImage(item.imageUrl ,item.user.phoneNo ,item.text,item.id );
                 }
              }) 
              
@@ -288,15 +287,24 @@ async function displayMessage(groupId,lastMsgId){
     //  localStorage.setItem(`chats${groupId}`,'');
 }
 // give last message id
-function getLastMsg(groupId){
-    let oldChats =localStorage.getItem(`chats${groupId}`);
-     
-     oldChatsArray = oldChats?JSON.parse(oldChats):[];
-    
-     const lastMsgId =oldChatsArray.length!=0? oldChatsArray[oldChatsArray.length-1].id : -1;
-     return lastMsgId;
+function getLastMsgId(groupId){
+    updateOldChatArray(groupId)
+    const lastMsgId =oldChatsArray.length!=0? oldChatsArray[oldChatsArray.length-1].id : -1;
+    return lastMsgId;
+}
+
+function getFirstMsg(groupId){
+    updateOldChatArray(groupId);
+    const firstMsgId =oldChatsArray.length!=0? oldChatsArray[0].id : -1;
+    return firstMsgId;
 }
 
 function makeCenter(){   
     chatDiv.scrollTop =chatDiv.scrollHeight;   
+}
+
+function updateOldChatArray(groupId){
+    let oldChats =localStorage.getItem(`chats${groupId}`);
+     
+     oldChatsArray = oldChats?JSON.parse(oldChats):[];
 }

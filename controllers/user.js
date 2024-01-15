@@ -12,17 +12,17 @@ exports.signupUser = async(req,res,next)=>{
         const saltRound = 10;
         bcrypt.hash(password,saltRound,async(err,hash)=>{
             try{
-            if(!err){
-                await user.create({
-                    email:email,
-                    name:name,
-                    phoneNo:phoneNo,
-                    password:hash
-                });
-                res.status(201).json({success:true,message:'user successfully signup'})
-            }else{
-                console.log(err)
-            }
+                if(!err){
+                    await user.create({
+                        email:email,
+                        name:name,
+                        phoneNo:phoneNo,
+                        password:hash
+                    });
+                    res.status(201).json({success:true,message:'user successfully signup'})
+                }else{
+                    console.log(err)
+                }
             
             }catch(err){
                 res.status(500).json({success:false,message:'email already exist!'})

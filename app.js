@@ -3,7 +3,6 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const path = require('path');
-// const http = require('http');
 const socketIo = require('socket.io');
 
 const app = express();
@@ -46,7 +45,7 @@ joinRequest.belongsTo(group);
 
 app.use(helmet({
     contentSecurityPolicy: false,
-  }))
+}))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded())
 app.use(cors({
@@ -90,7 +89,7 @@ sequelize
         })
         socket.on('send-request',({phoneNo ,groupId})=>{
             const room = `${phoneNo}`;
-            console.log(room)
+            // console.log(room)
             socket.to(room).emit('phone-no',groupId)
         })
     })
