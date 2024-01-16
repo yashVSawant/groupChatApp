@@ -19,6 +19,9 @@ nav div{
     flex-direction: row;
     align-items: center;
 }
+#showError{
+    color:red
+}
 #members div{
     background-color: rgb(247, 186, 244);
     padding-inline: 15px;

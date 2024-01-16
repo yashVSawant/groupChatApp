@@ -16,6 +16,9 @@ button{
     border: 3px solid rgb(112, 161, 144);
     background-color: aquamarine;
 }
+#showError{
+    color:red
+}
 #container{
     background-color: rgb(236, 192, 139);
     border-radius: 20px;

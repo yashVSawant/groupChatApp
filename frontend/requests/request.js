@@ -34,22 +34,34 @@ showRequests.addEventListener('click',async(e)=>{
 
 search.addEventListener('click',async()=>{
     const text = document.getElementById('text').value;
-    const getSearched = await axios.get(`/group/searchGroup?text=${text}`,{headers:{'Authorization':token}})
-    showSearchedResults.innerHTML='';
-    if(getSearched.data.success){
-            getSearched.data.group.forEach((item)=>{
-                // console.log(item)
-                displaySearchResultGroup(item.name,item.id)
-            })
+    if(text){
+        try{
+            const getSearched = await axios.get(`/group/searchGroup?text=${text}`,{headers:{'Authorization':token}})
+            showSearchedResults.innerHTML='';
+            if(getSearched.data.success){
+                    getSearched.data.group.forEach((item)=>{
+                        // console.log(item)
+                        displaySearchResultGroup(item.name,item.id)
+                    })
+            }else{
+                const showError = document.getElementById('showError');
+                showError.innerHTML='<h2>no result found</h2>'
+                showError.style.color ='yellow';
+                setTimeout(()=>{
+                    showError.innerHTML=''
+                },2000)
+                }
+        }catch(err){
+            alert('somthing went wrong')
+        }
+        document.getElementById('text').value="";
     }else{
         const showError = document.getElementById('showError');
-        showError.innerHTML='<h2>no result found</h2>'
-        showError.style.color ='yellow';
+        showError.innerText='please enter something';
         setTimeout(()=>{
-            showError.innerHTML=''
+            showError.innerText='';
         },2000)
     }
-    document.getElementById('text').value="";
 })
 
 showSearchedResults.addEventListener('click',async(e)=>{

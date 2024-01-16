@@ -25,7 +25,7 @@ exports.signupUser = async(req,res,next)=>{
                 }
             
             }catch(err){
-                res.status(500).json({success:false,message:'email already exist!'})
+                res.status(403).json({success:false,message:'email already exist!'})
             }
         })
 }
@@ -60,24 +60,25 @@ exports.loginUser = async(req,res,next)=>{
 exports.searchUsers = async(req,res,next)=>{
     try{
         const {searchMember} = req.query;
-        // console.log(searchMember);
-        const findByName = user.findAll({where:{name:searchMember,id:{[Sequelize.Op.ne]:req.user.id}},attributes:['id','name','phoneNo']})
-        const findByEmail = user.findAll({where:{email:searchMember,id:{[Sequelize.Op.ne]:req.user.id}},attributes:['id','name','phoneNo']})
-        const findByPhone = user.findAll({where:{phoneNo:searchMember,id:{[Sequelize.Op.ne]:req.user.id}},attributes:['id','name','phoneNo']})
-        const [ByName,ByEmail,ByPhone] = await Promise.all([findByName,findByEmail,findByPhone])
-        // console.log(ByName,ByEmail,ByPhone)
-        if(ByName.length>0){
-            res.status(200).json({success:true,users:ByName})
-        }else if(ByEmail.length>0){
-            res.status(200).json({success:true,users:ByEmail})
-        }else if(ByPhone.length>0){
-            res.status(200).json({success:true,users:ByPhone})
-        }else{
-            res.status(200).json({success:true,users:''})
+        if(isstringinvalid(searchMember)){
+            res.status(400).json({success:false,message:'enter valid input'})
         }
-        
+            const findByName = user.findAll({where:{name:searchMember,id:{[Sequelize.Op.ne]:req.user.id}},attributes:['id','name','phoneNo']})
+            const findByEmail = user.findAll({where:{email:searchMember,id:{[Sequelize.Op.ne]:req.user.id}},attributes:['id','name','phoneNo']})
+            const findByPhone = user.findAll({where:{phoneNo:searchMember,id:{[Sequelize.Op.ne]:req.user.id}},attributes:['id','name','phoneNo']})
+            const [ByName,ByEmail,ByPhone] = await Promise.all([findByName,findByEmail,findByPhone])
+            // console.log(ByName,ByEmail,ByPhone)
+            if(ByName.length>0){
+                res.status(200).json({success:true,users:ByName})
+            }else if(ByEmail.length>0){
+                res.status(200).json({success:true,users:ByEmail})
+            }else if(ByPhone.length>0){
+                res.status(200).json({success:true,users:ByPhone})
+            }else{
+                throw new Error('not found',404)
+            }
     }catch(err){
-        res.status(400).json({success:false})
+        res.status(400).json({success:false,message:err})
     }
 }
 

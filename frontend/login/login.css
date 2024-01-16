@@ -16,6 +16,9 @@ button{
     border: 3px solid rgb(112, 161, 144);
     background-color: rgb(240, 220, 134);
 }
+#showError{
+    color:red
+}
 #container{
     background-color: rgb(60, 220, 241);
     border-radius: 20px;

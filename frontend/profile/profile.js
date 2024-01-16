@@ -60,12 +60,19 @@ search.addEventListener('click',async()=>{
         const getUsers = await axios.get(`/user/searchUser?searchMember=${searchMember}`,{headers:{'Authorization':token}})
         getUsers.data.users.forEach((item)=>{
             // console.log(item);
-            showSearchedNames(item.name,item.phoneNo,showSearchedUsers);
+            showSearchedNames(item.name,item.phoneNo);
         })
         document.getElementById('searchMember').value="";
         }catch(err){
+            console.log(err)
             alert('user not found');
         }
+    }else{
+        const showError = document.getElementById('showError');
+        showError.innerText='please enter something';
+        setTimeout(()=>{
+            showError.innerText='';
+        },2000)
     }
 })
 
@@ -103,7 +110,7 @@ back.addEventListener('click',()=>{
 })
 
 // show searched names
-function showSearchedNames(name,phone,showSearchedUsers){
+function showSearchedNames(name,phone){
     const div = document.createElement('div');
     div.innerHTML=`${name}-   ${phone}<button class='inviteToGroup'>Invite</button>`;
     showSearchedUsers.appendChild(div);

@@ -76,7 +76,7 @@ exports.deleteGroup = async(req,res,next)=>{
         if(isRequestFromAdmin.isAdmin){
             await group.destroy({where:{id:groupId}});
             await userGroup.destroy({where:{groupId:groupId}});
-            res.status(200).json({success:true})
+            res.status(201).json({success:true})
         }else{
             throw new Error('you are not admin', 403);
         } 
@@ -103,7 +103,7 @@ exports.getMembersInGroup = async(req,res,next)=>{
         res.status(200).json({success:true,groupMembers,admin:admin});
     }catch(err){
         console.log(err)
-        res.status(400).json({success:false})
+        res.status(500).json({success:false})
     }
 }
 
@@ -125,12 +125,12 @@ exports.searchGroup = async(req,res,next)=>{
             
             res.status(200).json({success:true,group:filteredGroups})
         }else{
-            res.status(200).json({success:false})
+            res.status(204).json({success:false})
         }
         
     }catch(err){
         console.log(err)
-        res.status(400).json({success:false})
+        res.status(500).json({success:false})
     }
 }
 
