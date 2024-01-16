@@ -72,11 +72,17 @@ exports.exitFromGroup = async(req,res,next)=>{
 exports.deleteGroup = async(req,res,next)=>{
     try{
         const {groupId} = req.query;
-        await group.destroy({where:{id:groupId}});
-        await userGroup.destroy({where:{groupId:groupId}});
-
+        const isRequestFromAdmin = await userGroup.findOne({where:{userId:req.user.id ,groupId:groupId},attributes:['isAdmin']});
+        if(isRequestFromAdmin.isAdmin){
+            await group.destroy({where:{id:groupId}});
+            await userGroup.destroy({where:{groupId:groupId}});
+            res.status(200).json({success:true})
+        }else{
+            throw new Error('you are not admin');
+        } 
     }catch(err){
-        console.log(err)
+        // console.log(err)
+        res.status(400).json({success:true,message:err})
     }
 }
 
@@ -102,33 +108,23 @@ exports.getMembersInGroup = async(req,res,next)=>{
     }
 }
 
-exports.search = async(req,res,next)=>{
+exports.searchGroup = async(req,res,next)=>{
     try{
         const {text} = req.query;
-        // console.log(text);
-        const findByEmail = user.findAll({where:{email:text,id:{[Sequelize.Op.ne]:req.user.id}},attributes:['id','name','phoneNo']})
-        const findByPhone = user.findAll({where:{phoneNo:text,id:{[Sequelize.Op.ne]:req.user.id}},attributes:['id','name','phoneNo']})
-        const findByGroupName = userGroup.findAll({
-            where: {
-              userId: {[Sequelize.Op.ne]:req.user.id},
-            },
-            include: [
-              {
-                model: group,
-                attributes: ['id', 'name'],
-                where:{name:text}
-              }
-            ],
-            attributes:['id']
-          });
-        const [ByEmail,ByPhone,groupName] = await Promise.all([findByEmail,findByPhone,findByGroupName])
-        // console.log(ByName,ByEmail,ByPhone)
-        if(ByEmail.length>0){
-            res.status(200).json({success:true,users:ByEmail})
-        }else if(ByPhone.length>0){
-            res.status(200).json({success:true,users:ByPhone})
-        }else if(groupName.length>0){
-            res.status(200).json({success:true,group:groupName})
+        const findByGroupName = await group.findAll({
+            where:{name:text},
+            attributes:['id','name']
+        }) 
+        const findGroups = await Promise.all(
+            findByGroupName.map(async (g) => {
+              const t = await userGroup.findOne({ where: { userId: req.user.id, groupId: g.id } });
+              return { group: g, hasRecord: !!t };
+            })
+        );
+        const filteredGroups = findGroups.filter(({ hasRecord }) => !hasRecord).map(({ group }) => group);
+        if(filteredGroups.length>0){
+            
+            res.status(200).json({success:true,group:filteredGroups})
         }else{
             res.status(200).json({success:false})
         }
@@ -204,8 +200,4 @@ exports.acceptRequest = async(req,res,next)=>{
     }catch(err){
         res.status(500).json({success:false})
     }
-}
-
-function isstringinvalid(getString){
-   return getString === ''?true:false;
 }

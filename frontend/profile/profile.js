@@ -21,6 +21,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
                     displayMembersAdmin(item.user.name,item.user.id,item.isAdmin);
                 })
             }else{
+                document.getElementById('delete').style.display='none';
                 membersInGroup.data.groupMembers.forEach((item)=>{
                     displayMembers(item.user.name,item.user.id,item.isAdmin);
                 })
@@ -89,8 +90,12 @@ exit.addEventListener('click',async()=>{
 })
 
 deleteGroup.addEventListener('click',async()=>{
-    await axios.delete(`/group/delteGroup?groupId=${groupId}`,{headers:{'Authorization':token}})
-    location.href='../chatHomePage/chatHomePage.html'
+    try{
+        await axios.delete(`/group/deleteGroup?groupId=${groupId}`,{headers:{'Authorization':token}})
+        location.href='../chatHomePage/chatHomePage.html'
+    }catch(err){
+        console.log(err)
+    }
 })
 
 back.addEventListener('click',()=>{

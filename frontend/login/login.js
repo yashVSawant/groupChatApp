@@ -11,6 +11,6 @@ login.addEventListener('click',async(e)=>{
             localStorage.setItem('grpChatappToken',postUserInfo.data.token);
             location.href='../chatHomePage/chatHomePage.html';
         }catch(err){
-            console.log(err);
+            alert(err.response.data.message)
         }
 })

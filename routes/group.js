@@ -9,10 +9,11 @@ route.post('/createGroup',authentication.authenticate,groupController.createGrou
 route.post('/inviteUserInGroup',authentication.authenticate,groupController.inviteUserInGroup);
 route.get('/getGroups',authentication.authenticate,groupController.getGroups);
 route.get('/getMembersInGroup',authentication.authenticate,groupController.getMembersInGroup)
-route.get('/search',authentication.authenticate,groupController.search)
+route.get('/searchGroup',authentication.authenticate,groupController.searchGroup)
 route.put('/makeAdmin',authentication.authenticate,groupController.makeAdmin)
 route.delete('/removeFromGroup',authentication.authenticate,groupController.removeMember)
 route.delete('/exitFromGroup',authentication.authenticate,groupController.exitFromGroup)
+route.delete('/deleteGroup',authentication.authenticate,groupController.deleteGroup)
 route.get('/getRequests',authentication.authenticate,groupController.getRequests)
 route.post('/acceptRequest',authentication.authenticate,groupController.acceptRequest)
 

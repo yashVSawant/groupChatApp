@@ -13,7 +13,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
         displayRequests(element.group.name,element.groupId)
        });
     }catch(err){
-        console.log(err)
+        alert('something went wrong!')
     }
 })
 back.addEventListener('click',()=>{
@@ -34,18 +34,13 @@ showRequests.addEventListener('click',async(e)=>{
 
 search.addEventListener('click',async()=>{
     const text = document.getElementById('text').value;
-    const getSearched = await axios.get(`/group/search?text=${text}`,{headers:{'Authorization':token}})
+    const getSearched = await axios.get(`/group/searchGroup?text=${text}`,{headers:{'Authorization':token}})
     showSearchedResults.innerHTML='';
     if(getSearched.data.success){
-        if(getSearched.data.users){
-            // console.log(getSearched.data.users[0])
-            displaySearchResult(getSearched.data.users[0].name,getSearched.data.users[0].phoneNo);
-        }else{
             getSearched.data.group.forEach((item)=>{
-                console.log(item)
-                displaySearchResultGroup(item.group.name,item.group.id)
+                // console.log(item)
+                displaySearchResultGroup(item.name,item.id)
             })
-        }
     }else{
         const showError = document.getElementById('showError');
         showError.innerHTML='<h2>no result found</h2>'
