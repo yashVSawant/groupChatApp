@@ -78,10 +78,9 @@ exports.deleteGroup = async(req,res,next)=>{
             await userGroup.destroy({where:{groupId:groupId}});
             res.status(200).json({success:true})
         }else{
-            throw new Error('you are not admin');
+            throw new Error('you are not admin', 403);
         } 
     }catch(err){
-        // console.log(err)
         res.status(400).json({success:true,message:err})
     }
 }

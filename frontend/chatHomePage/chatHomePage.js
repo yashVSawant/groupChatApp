@@ -1,4 +1,3 @@
-
 const socket = io();
 const chatDiv = document.getElementById('chat');
 const token = localStorage.getItem('grpChatappToken');
@@ -13,6 +12,7 @@ const backFromAdd = document.getElementById('backFromAdd');
 const backFromCreate = document.getElementById('backFromCreate');
 const requests = document.getElementById('requests');
 const backFromChat = document.getElementById('backFromChat');
+const logout = document.getElementById('logout');
 
 let oldChatsArray;
 
@@ -123,12 +123,6 @@ send.addEventListener('click',async(e)=>{
     }
     
 })
-// showGroupsButton.addEventListener('click',()=>{
-//     const groupsDiv = document.getElementById('groupsDiv');
-//     groupsDiv.style.display='flex'
-// })
-
-// opening create group div
 createGroup.addEventListener('click',()=>{
     const mainDiv = document.getElementById('div');
     const newGroup = document.getElementById('newGroup');
@@ -206,6 +200,10 @@ backFromChat.addEventListener('click',()=>{
         nav.style.display='flex'
         groupsDiv.style.display='flex'
         container.style.display='none'
+})
+logout.addEventListener('click',()=>{
+    localStorage.removeItem('grpChatappToken');
+    location.href='../login/index.html'
 })
 
 
