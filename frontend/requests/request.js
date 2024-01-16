@@ -2,13 +2,12 @@ const showRequests = document.getElementById('showRequests');
 const back = document.getElementById('back');
 const search = document.getElementById('search');
 const showSearchedResults = document.getElementById('showSearchedResults')
-const host='http://localhost:3000';
 const token = localStorage.getItem('grpChatappToken');
 
 
 window.addEventListener('DOMContentLoaded',async()=>{
     try{
-       const getRequests = await axios.get(`${host}/group/getRequests`,{headers:{'Authorization':token}})
+       const getRequests = await axios.get(`/group/getRequests`,{headers:{'Authorization':token}})
        getRequests.data.requests.forEach(element => {
         console.log(element)
         displayRequests(element.group.name,element.groupId)
@@ -25,7 +24,7 @@ showRequests.addEventListener('click',async(e)=>{
         try{
             const id=e.target.id;
             console.log(id);
-            await axios.post(`${host}/group/acceptRequest`,{groupId:id},{headers:{'Authorization':token}})
+            await axios.post(`/group/acceptRequest`,{groupId:id},{headers:{'Authorization':token}})
             e.target.parentNode.removeChild(e.target)
         }catch(err){
             console.log(err)
@@ -35,7 +34,7 @@ showRequests.addEventListener('click',async(e)=>{
 
 search.addEventListener('click',async()=>{
     const text = document.getElementById('text').value;
-    const getSearched = await axios.get(`${host}/group/search?text=${text}`,{headers:{'Authorization':token}})
+    const getSearched = await axios.get(`/group/search?text=${text}`,{headers:{'Authorization':token}})
     showSearchedResults.innerHTML='';
     if(getSearched.data.success){
         if(getSearched.data.users){
@@ -63,7 +62,7 @@ showSearchedResults.addEventListener('click',async(e)=>{
     if(e.target.classList.contains('joinGroup')){
         console.log(e.target.id);
         const groupId=e.target.id;
-        await axios.post(`${host}/group/acceptRequest`,{groupId},{headers:{'Authorization':token}})
+        await axios.post(`/group/acceptRequest`,{groupId},{headers:{'Authorization':token}})
         e.target.parentNode.removeChild(e.target)
     }else if(e.target.classList.contains('makeFriend')){
         console.log(e.target.id);

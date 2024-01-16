@@ -1,4 +1,4 @@
-const host = 'http://localhost:3000';
+
 const socket = io();
 const chatDiv = document.getElementById('chat');
 const token = localStorage.getItem('grpChatappToken');
@@ -17,7 +17,7 @@ const backFromChat = document.getElementById('backFromChat');
 let oldChatsArray;
 
 async function setUserNumber(){
-    const userPhoneNo = await axios.get(`${host}/user/getPhoneNo`,{headers:{'Authorization':token}});
+    const userPhoneNo = await axios.get(`/user/getPhoneNo`,{headers:{'Authorization':token}});
     // console.log(userPhoneNo.data.userPhoneNo);
     localStorage.setItem('userPhoneNo',userPhoneNo.data.userPhoneNo)
     socket.emit('join-phoneNo',(userPhoneNo.data.userPhoneNo))
@@ -51,7 +51,7 @@ socket.on('phone-no',(groupId)=>{
 
 window.addEventListener('DOMContentLoaded',async()=>{ 
     try{           
-        const groupsData = await axios.get(`${host}/group/getGroups`,{headers:{'Authorization':token}});
+        const groupsData = await axios.get(`/group/getGroups`,{headers:{'Authorization':token}});
         // console.log(groupsData)
         groupsData.data.groups.forEach((item)=>{
             // console.log(item.group.name,item.group.id,item.isAdmin);
@@ -75,7 +75,7 @@ send.addEventListener('click',async(e)=>{
         //    console.log(file);
         
             if(!file && text){
-                await axios.post(`${host}/message/postMessage`,{text,groupId},{headers:{'Authorization':token}});
+                await axios.post(`/message/postMessage`,{text,groupId},{headers:{'Authorization':token}});
                 updateChange();
             }
             
@@ -98,7 +98,7 @@ send.addEventListener('click',async(e)=>{
                                 formData.append('groupId', groupId);
                                 formData.append('file', blob);
                                 formData.append('text', text);
-                                await axios.post(`${host}/message/postFile`,formData,{headers:{'Authorization':token,'Content-Type': 'multipart/form-data'},'enctype':"multipart/form-data"});
+                                await axios.post(`/message/postFile`,formData,{headers:{'Authorization':token,'Content-Type': 'multipart/form-data'},'enctype':"multipart/form-data"});
                                 updateChange();
                             },
                             MIME_TYPE,
@@ -140,7 +140,7 @@ createGroup.addEventListener('click',()=>{
 creatNewGroup.addEventListener('click',async()=>{
     try{
         const name = document.getElementById('groupName').value;
-        const getGroup = await axios.post(`${host}/group/createGroup`,{name},{headers:{'Authorization':token}});
+        const getGroup = await axios.post(`/group/createGroup`,{name},{headers:{'Authorization':token}});
         // console.log();
         displayGroups(name,getGroup.data.group.groupId,getGroup.data.group.isAdmin)
         alert('group is created successfully');
@@ -284,7 +284,7 @@ function createSendButton(id){
 async function displayMessage(groupId,lastMsgId){
     
     //  console.log(lastMsgId)
-     const chats = await axios.get(`${host}/message/getMessages?lastMsgId=${lastMsgId}&groupId=${groupId}`,{headers:{'Authorization':token}});
+     const chats = await axios.get(`/message/getMessages?lastMsgId=${lastMsgId}&groupId=${groupId}`,{headers:{'Authorization':token}});
     //  console.log(chats.data.success);
      if(chats.data.success){
              chats.data.groupChats.forEach((item)=>{

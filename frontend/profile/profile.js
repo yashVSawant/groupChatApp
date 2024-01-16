@@ -7,14 +7,13 @@ const members = document.getElementById('members');
 const back = document.getElementById('back');
 const exit = document.getElementById('exit');
 const deleteGroup = document.getElementById('delete');
-const host = "http://localhost:3000";
 const socket = io();
 members.innerHTML='';
 
 window.addEventListener('DOMContentLoaded',async()=>{
         try{
             document.getElementById('headName').innerText = groupName;
-            const membersInGroup = await axios.get(`${host}/group/getMembersInGroup?GroupId=${groupId}`,{headers:{'Authorization':token}});
+            const membersInGroup = await axios.get(`/group/getMembersInGroup?GroupId=${groupId}`,{headers:{'Authorization':token}});
             const admin = membersInGroup.data.admin;
             console.log(membersInGroup);
             if(admin){
@@ -37,14 +36,14 @@ members.addEventListener('click',async(e)=>{
             // console.log(e.target.parentNode.id)
             const id = parseInt(e.target.parentNode.id);
             // console.log(id)
-            await axios.delete(`${host}/group/removeFromGroup?userId=${id}&groupId=${groupId}`,{headers:{'Authorization':token}})
+            await axios.delete(`/group/removeFromGroup?userId=${id}&groupId=${groupId}`,{headers:{'Authorization':token}})
             e.target.parentNode.parentNode.removeChild(e.target.parentNode);
             alert('succefully removed');
         }else if(e.target.classList.contains('makeAdmin')){
             // console.log(e.target.parentNode.parentNode.parentNode.parentNode.parentNode)
             const id = parseInt(e.target.parentNode.id);
             console.log(id)
-            const makeUserAdmin = await axios.put(`${host}/group/makeAdmin?userId=${id}&groupId=${groupId}`,{},{headers:{'Authorization':token}})
+            const makeUserAdmin = await axios.put(`/group/makeAdmin?userId=${id}&groupId=${groupId}`,{},{headers:{'Authorization':token}})
             const editDiv = document.getElementById(e.target.parentNode.id);
             editDiv.innerHTML=`${makeUserAdmin.data.user.name}  (admin)<button class='remove'>remove</button>`;
         }
@@ -57,7 +56,7 @@ search.addEventListener('click',async()=>{
     const searchMember = document.getElementById(`searchMember`).value; 
     if(searchMember){
         try{   
-        const getUsers = await axios.get(`${host}/user/searchUser?searchMember=${searchMember}`,{headers:{'Authorization':token}})
+        const getUsers = await axios.get(`/user/searchUser?searchMember=${searchMember}`,{headers:{'Authorization':token}})
         getUsers.data.users.forEach((item)=>{
             // console.log(item);
             showSearchedNames(item.name,item.phoneNo,showSearchedUsers);
@@ -82,7 +81,7 @@ showSearchedUsers.addEventListener('click',(e)=>{
 
 exit.addEventListener('click',async()=>{
     try{
-        await axios.delete(`${host}/group/exitFromGroup?groupId=${groupId}`,{headers:{'Authorization':token}})
+        await axios.delete(`/group/exitFromGroup?groupId=${groupId}`,{headers:{'Authorization':token}})
         location.href='../chatHomePage/chatHomePage.html'
     }catch(err){
         console.log(err);
@@ -90,7 +89,7 @@ exit.addEventListener('click',async()=>{
 })
 
 deleteGroup.addEventListener('click',async()=>{
-    await axios.delete(`${host}/group/delteGroup?groupId=${groupId}`,{headers:{'Authorization':token}})
+    await axios.delete(`/group/delteGroup?groupId=${groupId}`,{headers:{'Authorization':token}})
     location.href='../chatHomePage/chatHomePage.html'
 })
 
@@ -135,7 +134,7 @@ async function inviteUserInGroup(phoneNo,groupId){
     try{
         await socket.emit('join-phoneNo',(phoneNo))
         // console.log(phoneNo ,groupId)
-        await axios.post(`${host}/group/inviteUserInGroup`,{phoneNo,groupId},{headers:{'Authorization':token}})
+        await axios.post(`/group/inviteUserInGroup`,{phoneNo,groupId},{headers:{'Authorization':token}})
         socket.emit('send-request',({phoneNo ,groupId}));
     }catch(err){
         console.log(err);
